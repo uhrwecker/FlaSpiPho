@@ -7,7 +7,7 @@ class PhotonProperties:
     """
     def __init__(self, emitter, chi=1, iota=0, eta=np.pi / 2):
         """
-            :param emitter: object; em.emitter.EmitterProperties object
+            :param emitter: object; emitter.EmitterProperties object
             :param chi: float; scaling parameter for the photon momentum, invariant for the application
             :param iota: float; phi-like emission angle
             :param eta: float; theta-like emission angle
@@ -70,24 +70,24 @@ class PhotonProperties:
             Routine to calculate the initial velocities for the photon geodesic.
             :return: iterable; [t', r', theta', phi']
         """
-        r = self.r#self.emitter.get_r0()
-
+        # dt:
         dt = self.E
 
+        # dr:
+        dr = -np.sqrt(self.E ** 2 - (self.Q + self.L ** 2) / self.r ** 2)
+        if np.isnan(dr):
+            dr = 0
+
+        # dtheta:
         omega = self.Q - self.L ** 2 * (np.cos(self.theta) / np.sin(self.theta)) ** 2
         if omega < 0:
             omega = np.abs(omega)
-        dtheta = np.sqrt(omega) / r**2
+        dtheta = np.sqrt(omega) / self.r**2
         if self.eta < np.pi / 2:
             dtheta *= -1
-        #dtheta = self.chi / r * np.cos(self.beta)
-        dphi = self.L / (r * np.sin(self.theta)) ** 2
 
-        dr = -np.sqrt(self.E ** 2 - (self.Q + self.L ** 2) / r ** 2)
-        #print(dr)
-        if np.isnan(dr):
-            dr = 0
-        #dr = self._check_dr_sign(self.alpha)
+        # dphi:
+        dphi = self.L / (self.r * np.sin(self.theta)) ** 2
 
         return dt, dr, dtheta, dphi
 
@@ -133,6 +133,19 @@ class PhotonProperties:
             self.setup()
 
     def _E(self, chi, eta, iota, gamma, vphi, gamma2, u1, u3, alpha):
+        """
+        Private method to calculate the constant of motion E, as described by the theory.
+        :param chi: float; scaling parameter for the photon momentum, invariant for the application
+        :param iota: float; phi-like emission angle
+        :param eta: float; theta-like emission angle
+        :param gamma: float; 1 / sqrt(1 - (vphi)^2)
+        :param vphi: float; orbital velocity of the emitter
+        :param gamma2: float; 1 / sqrt(1 - (u1)^2 - (u3)^2)
+        :param u1: float; linear velocity in [1] direction, resulting from angular velocity
+        :param u3: float; linear velocity in [3] direction, resulting from angular velocity
+        :param alpha: float; deprecated
+        :return: E; constant of motion
+        """
         d0 = gamma2 * (1 + u1 * np.cos(iota) * np.sin(eta) + u3 * np.sin(iota) * np.sin(eta))
         d1 = -gamma2 * u1 + (1 + gamma2**2 * u1**2 / (1 + gamma2)) * np.cos(iota) * np.sin(eta) + \
              (gamma2 **2 * u1 * u3 / (1 + gamma2)) * np.sin(iota) * np.sin(eta)
@@ -144,6 +157,19 @@ class PhotonProperties:
         return chi * a0
 
     def _L(self, chi, eta, iota, gamma, vphi, gamma2, u1, u3, alpha):
+        """
+        Private method to calculate the constant of motion L, as described by the theory.
+        :param chi: float; scaling parameter for the photon momentum, invariant for the application
+        :param iota: float; phi-like emission angle
+        :param eta: float; theta-like emission angle
+        :param gamma: float; 1 / sqrt(1 - (vphi)^2)
+        :param vphi: float; orbital velocity of the emitter
+        :param gamma2: float; 1 / sqrt(1 - (u1)^2 - (u3)^2)
+        :param u1: float; linear velocity in [1] direction, resulting from angular velocity
+        :param u3: float; linear velocity in [3] direction, resulting from angular velocity
+        :param alpha: float; deprecated
+        :return: L; constant of motion
+        """
         d0 = gamma2 * (1 + u1 * np.cos(iota) * np.sin(eta) + u3 * np.sin(iota) * np.sin(eta))
         d1 = -gamma2 * u1 + (1 + gamma2 ** 2 * u1 ** 2 / (1 + gamma2)) * np.cos(iota) * np.sin(eta) + \
              (gamma2 ** 2 * u1 * u3 / (1 + gamma2)) * np.sin(iota) * np.sin(eta)
@@ -155,6 +181,13 @@ class PhotonProperties:
         return chi * a3 * self.r * np.sin(self.theta)
 
     def _Q(self, chi, eta, L):
+        """
+        Private method to calculate the constant of motion Q, as described by the theory.
+        :param chi: float; scaling parameter for the photon momentum, invariant for the application
+        :param eta: float; theta-like emission angle
+        :param L: float; constant of motion
+        :return: Q; constant of motion
+        """
         return self.r**2 * chi**2 * np.cos(eta)**2 + L**2 / np.tan(self.theta)**2
 
     def _check_dr_sign(self, alpha=np.pi/2):
