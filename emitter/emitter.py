@@ -8,10 +8,14 @@ class EmitterProperties:
     """
     def __init__(self, s, r0=8, phi0=0, omega=1, P=0, T=np.pi/2, rho=0.2, rotation='positive'):
         """
-            :param s: float; spin of the timelike object
-            :param r0: float; orbit of the timelike object
-            :param rotation: rotation: ['positive', 'negative']; determining equations are oblivious to the sign of L;
-            this is determined by the rotation parameter.
+        :param s: float; spin of the object, perpendicular to the angular momentum of the orbit
+        :param r0: float; radial position of the center of the sphere
+        :param phi0: float; phi-position of the center of the sphere
+        :param omega: float; coordinate dot(phi) constant - used to describe the orbital velocity
+        :param P: float; local spherical phi-like coordinate on the spheres' surface
+        :param T: float; local spherical theta-like coordinate on the spheres' surface
+        :param rho: float; local radius of the sphere, as measured from the rest system of the sphere
+        :param rotation: str ['positive', 'negative']; sense of rotation of the emission object around the origin
         """
         # spin of the emitter:
         self.s = s
@@ -20,6 +24,7 @@ class EmitterProperties:
         self.rho = rho
         self.P = P
         self.T = T
+
         # check for rho and s:
         if 2 * rho * 5/2 * s / rho**2 > 1:
             raise ValueError('The radius of the sphere is too high.')
@@ -27,25 +32,27 @@ class EmitterProperties:
         # sense of rotation:
         self.rotation = rotation
 
+        # position of the center:
         self.r0 = r0
         self.phi0 = phi0
+
+        # coordinate position on the sphere:
+        self.r = None
+        self.theta = None
+        self.phi = None
+
+        # measure for the orbital velocity:
         self.omega = omega
-        self.E = None
-        self.L = None
 
         # orbit velocities:
         self.vr = None
         self.vphi = None
         self.gamma = None
 
+        # linear velocity on the surface of the sphere:
         self.u1 = None
         self.u3 = None
         self.gamma2 = None
-
-        # real position:
-        self.r = None
-        self.theta = None
-        self.phi = None
 
         self.setup()
 
@@ -71,8 +78,8 @@ class EmitterProperties:
 
     def calculate_rotation(self):
         """
-
-        :return:
+        Method to calculate the linear velocity on the surface, result of the angular velocity
+        :return: [u1, u3, gamma(2)]; return the linear velocity on the surface, as well as gamma.
         """
         u1 = self._u1()
         u3 = self._u3()
@@ -100,21 +107,24 @@ class EmitterProperties:
             self.setup()
 
     def set_P(self, P, recalc=True):
+        """
+        Set (and possibly recalc) the local Phi-like coordinate.
+        :param P: float; local spherical phi-like coordinate on the spheres' surface
+        :param recalc: bool; determines if the COM and physical velocities are recalculated for the given s.
+        """
         self.P = P
         if recalc:
             self.setup()
 
     def set_T(self, T, recalc=True):
+        """
+
+        :param T: float; local spherical theta-like coordinate on the spheres' surface
+        :param recalc: bool; determines if the COM and physical velocities are recalculated for the given s.
+        """
         self.T = T
         if recalc:
             self.setup()
-
-    def get_com(self):
-        """
-            Getter for the constants of motion.
-            :return: [E, L]; energy and angular momentum of the orbit.
-        """
-        return self.E, self.L
 
     def get_r0(self):
         """
@@ -131,6 +141,10 @@ class EmitterProperties:
         return self.vr, self.vphi, self.gamma
 
     def get_rotation_velocities(self):
+        """
+            Getter for the physical velocities of the timelike object.
+            :return: [u1, u3, gamma2]; linear velocities of the surface, as well as well known gamma.
+        """
         return self.u1, self.u3, self.gamma2
 
     def get_sense_of_rotation(self):
@@ -148,14 +162,26 @@ class EmitterProperties:
         return self.s
 
     def get_position(self):
+        """
+        Getter for the coordinate position of the surface point.
+        :return: [r, theta, phi]; coordinate position of the point on the surface of the sphere
+        """
         return self.r, self.theta, self.phi
 
     def _u1(self):
+        """
+        Private method to calculate the [1] component of the linear velocity
+        :return: u1; coordinate velocity in [1] direction
+        """
         o = 5/2 * self.s / self.rho**2
         u1 = self.rho * o * np.sin(self.P) * np.sin(self.T)
         return u1
 
     def _u3(self):
+        """
+        Private method to calculate the [3] component of the linear velocity
+        :return: u3; coordinate velocity in [3] direction
+        """
         o = 5/2 * self.s / self.rho**2
         return self.rho * o * np.cos(self.P) * np.sin(self.T)
 
