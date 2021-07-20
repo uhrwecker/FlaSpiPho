@@ -45,7 +45,7 @@ td = ThreeDPlotmachine(robs, tobs, pobs, rc, pc, rho)
 
 for item in tqdm(grid, file=sys.stdout):
     with nostdout():
-        solver.set_P_and_T(item[1], item[0])
+        solver.set_T_and_P(item[0], item[1])
         td.plot_observer()
         td.plot_emitter()
 
