@@ -27,7 +27,7 @@ def nostdout():
     sys.stdout = save_stdout
 
 
-solver = ODESolver(directory='./')
+solver = ODESolver()
 
 robs = 15
 pobs = 0
@@ -58,7 +58,7 @@ for item in tqdm(grid, file=sys.stdout):
 
         solver.set_eta(eta, False)
         solver.set_iota(iota)
-        collision = solver.save(False)
+        #collision = solver.save(False)
 
         td.plot_test_ray(solver, iota, eta)
 

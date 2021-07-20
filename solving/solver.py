@@ -10,9 +10,9 @@ class ODESolver:
     """
         Wrapper class for solving the differential equations for the motion of timelike geodesics.
     """
-    def __init__(self, directory='./', file=None):
+    def __init__(self, file=None):
 
-        self.dm = dm.DataHandling(directory, file)
+        self.dm = dm.DataHandling(file)
         s, r, _, phi0 = self.dm.get_input_center_config()
         rho, T, P, omega = self.dm.get_input_sphere_config()
         chi, iota, eta, rotation = self.dm.get_input_photon_config()

@@ -4,14 +4,21 @@ import pandas as pd
 
 
 class DataHandling:
-    def __init__(self, dir_path='./', file=None):
-        self.dir = dir_path
+    """
+    Class that handles all kinds of data manipulation (saving/loading/combination)
+    """
+    def __init__(self, file=None):
+        """
+        Initiation of Data class
+        :param file: str; path to input file
+        """
         if not file:
             self.file = './demo_input.ini'
         else:
             self.file = file
 
-        self.input_config = self.load_input()
+        # config['DATA']['fp'] has to end with /
+        self.dir, self.input_config = self.load_input()
 
     def generate_result_file(self, sigma, data):
         df = pd.DataFrame({
@@ -98,11 +105,14 @@ class DataHandling:
 
     def load_input(self):
         config = cp.ConfigParser()
-        config.read(self.dir + self.file)
-        return config
+        config.read(self.file)
+        return config['DATA']['fp'], config
 
     def _write_input(self):
         config = cp.ConfigParser()
+
+        config['DATA'] = {}
+        config['DATA']['fp'] = './'
 
         config['CENTER_POSITION'] = {}
         config['CENTER_POSITION']['s'] = '0.'
