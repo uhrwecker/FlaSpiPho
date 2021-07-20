@@ -207,4 +207,4 @@ class EmitterProperties:
         if root < 0:
             print(f'warning: root smaller 0; might be ok, root is {root}')  #
 
-        return self.r0 / (self.r0 ** 3 * self.E - self.s * self.L) * np.sqrt(np.abs(root))
+        return 0#self.r0 / (self.r0 ** 3 * self.E - self.s * self.L) * np.sqrt(np.abs(root))
