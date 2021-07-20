@@ -8,7 +8,6 @@ import numpy as np
 import sys
 import contextlib
 import argparse
-import time
 
 
 class DummyFile(object):
@@ -106,9 +105,9 @@ if __name__ == '__main__':
         # Your input (when not via CLI):
 
         fp = './demo_input.ini'
-        save = True
+        save = False
         save_when_colliding = False
-        grid = None, None
+        grid = 2, 2
         plot = True
 
         ###################################################################
@@ -127,7 +126,7 @@ if __name__ == '__main__':
 
         if grid[0] and grid[1]:
             plot = ''
-            grid = str(grid[0]) + ' ' + str(grid[1])
+            grid = '-g ' + str(grid[0]) + ' ' + str(grid[1])
             grid += ' '
         else:
             grid = ''

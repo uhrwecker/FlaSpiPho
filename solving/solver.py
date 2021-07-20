@@ -81,7 +81,7 @@ class ODESolver:
         """
         chi, iota, eta, rotation = self.dm.get_input_photon_config()
 
-        self.emitter.set_P(P)
+        self.emitter.set_P(P, recalc=False)
         self.emitter.set_T(T)
 
         self.photon = light.PhotonProperties(self.emitter, chi, iota, eta)

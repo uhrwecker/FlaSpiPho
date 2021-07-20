@@ -75,9 +75,10 @@ class PhotonProperties:
         dt = self.E
 
         # dr:
-        dr = -np.sqrt(self.E ** 2 - (self.Q + self.L ** 2) / self.r ** 2)
-        if np.isnan(dr):
-            dr = 0
+        #dr = -np.sqrt(self.E ** 2 - (self.Q + self.L ** 2) / self.r ** 2)
+        #if np.isnan(dr):
+        #    dr = 0
+        dr = self._check_dr_sign(self.alpha)
 
         # dtheta:
         omega = self.Q - self.L ** 2 * (np.cos(self.theta) / np.sin(self.theta)) ** 2

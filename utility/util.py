@@ -42,7 +42,7 @@ def get_spherical_grid(num_rings=5, max_n=10):
     vals = []
     for t in theta:
         if t == 0 or t == np.pi:
-            vals.append((t, 0))
+            vals.append((t, 0.))
         else:
             max_phi = int(np.sin(t) * max_n)
             if max_phi >= 1:
