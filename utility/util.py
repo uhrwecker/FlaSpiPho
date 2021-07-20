@@ -1,6 +1,9 @@
 import numpy as np
 
 def convert_position(r0, t0, p0, rho, T, P):
+    """
+    Convert the local spherical coordinates into global spherical coordinates
+    """
     # position to center: r0, t0, p0
     # local coords: rho, T, P
 
@@ -15,6 +18,9 @@ def convert_position(r0, t0, p0, rho, T, P):
     return r, theta, phi
 
 def get_phi(x, y, z, tol=1e-4):
+    """
+    From cartesian x, y, z coordinates, get the angle phi.
+    """
     if x > tol:
         return np.arctan(y / x)
     elif -tol < x < tol:
@@ -25,6 +31,9 @@ def get_phi(x, y, z, tol=1e-4):
         return np.arctan(y / x) - np.pi
 
 def get_spherical_grid(num_rings=5, max_n=10):
+    """
+    Calculate a spherical grid from number of rings and points on the ring.
+    """
     theta = np.linspace(0, np.pi, num=num_rings, endpoint=False)
 
     vals = []
