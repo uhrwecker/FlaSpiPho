@@ -21,6 +21,12 @@ class DataHandling:
         self.dir, self.input_config = self.load_input()
 
     def generate_result_file(self, sigma, data):
+        """
+        Method to generate the data file (.csv format) from the result of the solver
+        :param sigma: np.array; array which contains the affine parameter
+        :param data: np.array (8, ); array which contains the result of the ODESolver
+        :return: pd.DataFrame; a pandas DataFrame that contains all data
+        """
         df = pd.DataFrame({
             'sigma': sigma,
             't': data[:, 0],
@@ -43,6 +49,13 @@ class DataHandling:
         return df
 
     def generate_data_config(self, emitter, photon):
+        """
+        Method to generate the config file (.ini format) from the emitter and photon object, as well as
+        meta data from the ODESolver
+        :param emitter: emitter.Emitter object; emitter object that has all emitter meta data that produced the ray data
+        :param photon: light.Photon object; photon object that has all photon meta data that produced the ray data
+        :return: config; full config object (input + meta data)
+        """
         chi, iota, eta = photon.get_angles()
         dt, dr, dtheta, dphi = photon.get_ic()
         E, L, Q = photon.get_com()
@@ -84,31 +97,56 @@ class DataHandling:
         return config
 
     def get_input_center_config(self):
+        """
+        Simple getter config that returns the center of the ball config.
+        :return: [s, r0, theta0, phi0]; spin and position of the origin of the ball
+        """
         cf = self.input_config['CENTER_POSITION']
 
         return float(cf['s']), float(cf['r0']), float(cf['theta0']), float(cf['phi0'])
 
     def get_input_sphere_config(self):
+        """
+        Simple getter config that returns the sphere properties config.
+        :return: [rho, T, P, omega]; radius of the sphere, T and P coordinates of the surface, and omega
+        """
         cf = self.input_config['SPHERE']
 
         return float(cf['rho']), float(cf['theta']), float(cf['phi']), float(cf['omega'])
 
     def get_input_photon_config(self):
+        """
+        Simple getter config that returns the photon config.
+        :return: [chi, iota, eta, rotation]; chi, the emission angles and sense of rotation
+        """
         cf = self.input_config['PHOTON']
 
         return float(cf['chi']), float(cf['iota']), float(cf['eta']), cf['rotation']
 
     def get_input_numeric_config(self):
+        """
+        Simple getter config that returns the numerical config.
+        :return: [start, stop, num, abserr, relerr]: start, end and number of steps for numerics, as well as the
+                                                     absolute and relative error margins for the ODESOlver
+        """
         cf = self.input_config['NUMERICS']
 
         return float(cf['start']), float(cf['stop']), int(cf['num']), float(cf['abserr']), float(cf['relerr'])
 
     def load_input(self):
+        """
+        Reads the input file specified in the initialization.
+        :return: [fp, config]; returns the path where the data should be stored, as well as the config itself
+        """
         config = cp.ConfigParser()
         config.read(self.file)
         return config['DATA']['fp'], config
 
     def _write_input(self):
+        """
+        (unused)(private)
+        Create a sample input file.
+        """
         config = cp.ConfigParser()
 
         config['DATA'] = {}
