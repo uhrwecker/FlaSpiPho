@@ -41,6 +41,7 @@ class PhotonProperties:
     def setup(self):
         """
             Simple setup routine.
+            :return: position, constants of motion and intitial velocities of the photon
         """
         self.r, self.theta, self.phi = self.emitter.get_position()
         self.E, self.L, self.Q = self.calculate_com()
@@ -192,7 +193,7 @@ class PhotonProperties:
 
     def _check_dr_sign(self, alpha=np.pi/2):
         """
-            (private)
+            (private)(deprecated)
             Check the sign of r'.
             :param dr: float; derivative of r
             :return: float; r' with proper sign
