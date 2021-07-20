@@ -38,3 +38,26 @@ def get_spherical_grid(num_rings=5, max_n=10):
                 vals += [(t, p) for p in phi]
 
     return vals
+
+def find_nearest(array, value):
+    """
+    (deprecated)
+    Find the index where an array is closest to a specific *value*.
+    :param array: np.array; array to be observed
+    :param value: float; value which should be close(st).
+    :return: int; index of original array that is the closest to the given value
+    """
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return idx
+
+def get_indices_of_k_smallest(arr, k):
+    """
+    (deprecated)
+    Find the indices of the k smallest entries in an array.
+    :param arr: np.array; array to be observed
+    :param k: int; number of smallest entries to be retrieved
+    :return: [ind]; returns a list of indices
+    """
+    idx = np.argpartition(arr.ravel(), k)
+    return tuple(np.array(np.unravel_index(idx, arr.shape))[:, range(min(k, 0), max(k, 0))])

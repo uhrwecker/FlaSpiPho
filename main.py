@@ -54,7 +54,7 @@ for item in tqdm(grid, file=sys.stdout):
         td.adjust()
         #td.show()
         eop = EmitterObserverProblem(solver, robs, tobs, pobs)
-        iota, eta, flag = eop.find_critical_angles(np.pi, 2*np.pi, 0.1, np.pi/2)
+        iota, eta, flag = eop.find_critical_angles(0.1, 2*np.pi, 0.1, np.pi)
 
         solver.set_eta(eta, False)
         solver.set_iota(iota)
