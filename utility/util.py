@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def convert_position(r0, t0, p0, rho, T, P):
     """
     Convert the local spherical coordinates into global spherical coordinates
@@ -17,6 +18,7 @@ def convert_position(r0, t0, p0, rho, T, P):
 
     return r, theta, phi
 
+
 def get_phi(x, y, z, tol=1e-4):
     """
     From cartesian x, y, z coordinates, get the angle phi.
@@ -29,6 +31,7 @@ def get_phi(x, y, z, tol=1e-4):
         return np.arctan(y / x) + np.pi
     elif x < tol and y < 0:
         return np.arctan(y / x) - np.pi
+
 
 def get_spherical_grid(num_rings=5, max_n=10):
     """
@@ -48,6 +51,7 @@ def get_spherical_grid(num_rings=5, max_n=10):
 
     return vals
 
+
 def find_nearest(array, value):
     """
     (deprecated)
@@ -59,6 +63,7 @@ def find_nearest(array, value):
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()
     return idx
+
 
 def get_indices_of_k_smallest(arr, k):
     """

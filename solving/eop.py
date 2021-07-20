@@ -7,17 +7,12 @@ class EmitterObserverProblem:
     Class that encapsules the emitter-observer-problem - meaning, finding the emission angles that result in
     a light ray that connects emitter and observer.
     """
-    def __init__(self, solver, r_obs, theta_obs, phi_obs):
+    def __init__(self, solver):
         """
         :param solver: solving.solver object; solver that already inherits the emitter and photon properties
-        :param r_obs: float; radial coordinate position of the observer
-        :param theta_obs: float; theta coordinate position of the observer
-        :param phi_obs: float; phi coordinate position of the observer
         """
         self.solver = solver
-        self.robs = r_obs
-        self.thetaobs = theta_obs
-        self.phiobs = phi_obs
+        self.robs, self.thetaobs, self.phiobs = self.solver.dm.get_input_observer_config()
 
     def find_critical_angles(self, imin=0., imax=2*np.pi, emin=0., emax=np.pi, n=15, max_step=40):
         """

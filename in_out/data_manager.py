@@ -133,6 +133,15 @@ class DataHandling:
 
         return float(cf['start']), float(cf['stop']), int(cf['num']), float(cf['abserr']), float(cf['relerr'])
 
+    def get_input_observer_config(self):
+        """
+        Simple getter config that returns the observer config.
+        :return: [r_obs, theta_obs, phi_obs]: position of the observer
+        """
+        cf = self.input_config['OBSERVER']
+
+        return float(cf['ro']), float(cf['thetao']), float(cf['phio'])
+
     def load_input(self):
         """
         Reads the input file specified in the initialization.
