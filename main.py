@@ -57,8 +57,6 @@ def main(arguments=None):
     plot = cli_args.plot
     rings, n = cli_args.grid
 
-    print(plot)
-
     solver = ODESolver(file)
 
     robs, tobs, pobs = solver.dm.get_input_observer_config()
@@ -107,10 +105,10 @@ if __name__ == '__main__':
         # Your input (when not via CLI):
 
         fp = './demo_input.ini'
-        save = False
+        save = True
         save_when_colliding = False
-        grid = 0, 0
-        plot = True
+        grid = 30, 25
+        plot = False
 
         ###################################################################
 

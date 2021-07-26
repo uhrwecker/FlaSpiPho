@@ -140,6 +140,7 @@ class ODESolver:
         dz = r0 * np.cos(theta0)
 
         dist = np.sqrt((x - dx)**2 + (y - dy)**2 + (z - dz)**2)[start:]
+
         flag = bool(dist[dist <= self.emitter.rho+tol].size)
 
         return flag

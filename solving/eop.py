@@ -166,7 +166,13 @@ class EmitterObserverProblem:
         idx = np.where(r[r < self.robs + 0.1] > self.robs - 0.1)[0]
 
         s = sigma[idx]
-        new_x = np.linspace(s[0], s[-1], num=10000)
+        try:
+            new_x = np.linspace(s[0], s[-1], num=10000)
+        except:
+            print(f'Somehow, the number of values are too small for {r[idx]}.')
+            print(self.solver.r0, self.solver.theta0, self.solver.phi0)
+            print(self.solver.emitter.T, self.solver.emitter.P)
+            raise KeyError
 
         r = np.interp(new_x, s, r[idx])
         t = np.interp(new_x, s, t[idx])
