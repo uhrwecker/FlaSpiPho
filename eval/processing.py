@@ -7,7 +7,7 @@ from eval.utility import *
 
 pl.figure(figsize=(10, 10))
 
-dps = load_data_points('D:/2021_07_26/data/s0/')
+dps = load_data_points('D:/2021_07_26/data/s01/')
 alphas, betas, gs = get_proper_matrix(dps)
 
 a = []
@@ -24,7 +24,7 @@ for dp in dps:
 
 cmap = pl.cm.cool_r
 norm = mp.colors.Normalize(np.nanmin(gs), np.nanmax(gs))
-pl.imshow(gs.T, extent=(alphas[0], alphas[-1], betas[0], betas[-1]), cmap=cmap, norm=norm)
+pl.imshow(gs, extent=(alphas[0], alphas[-1], betas[0], betas[-1]), cmap=cmap, norm=norm, interpolation='bilinear')
 
 pl.xlim(alphas[0], alphas[-1])
 pl.ylim(betas[0], betas[-1])

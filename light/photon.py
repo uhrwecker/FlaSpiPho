@@ -75,10 +75,11 @@ class PhotonProperties:
         dt = self.E
 
         # dr:
-        #dr = -np.sqrt(self.E ** 2 - (self.Q + self.L ** 2) / self.r ** 2)
-        #if np.isnan(dr):
-        #    dr = 0
-        dr = self._check_dr_sign(self.alpha)
+        dr = np.sqrt(self.E ** 2 - (self.Q + self.L ** 2) / self.r ** 2)
+        #print(dr)
+        if np.isnan(dr):
+            dr = 0
+        #dr = self._check_dr_sign(self.alpha)
 
         # dtheta:
         omega = self.Q - self.L ** 2 * (np.cos(self.theta) / np.sin(self.theta)) ** 2
@@ -153,7 +154,7 @@ class PhotonProperties:
              (gamma2 **2 * u1 * u3 / (1 + gamma2)) * np.sin(iota) * np.sin(eta)
         d3 = -gamma2 * u1 + (gamma2 **2 * u1 * u3 / (1 + gamma2)) * np.cos(iota) * np.sin(eta) + \
              (1 + gamma2**2 * u3**2 / (1 + gamma2)) * np.sin(iota) * np.sin(eta)
-        c3 =- np.sin(alpha) * d1 + np.cos(alpha) * d3
+        c3 = -np.sin(alpha) * d1 + np.cos(alpha) * d3
         a0 = gamma * (d0 + vphi * c3)
 
         return chi * a0
