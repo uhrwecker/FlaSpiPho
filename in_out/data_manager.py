@@ -87,6 +87,8 @@ class DataHandling:
         config['INITIAL_CONDITIONS']['dtheta'] = str(dtheta)
         config['INITIAL_CONDITIONS']['dphi'] = str(dphi)
 
+        config['SPHERE']['theta'] = str(emitter.T)
+        config['SPHERE']['phi'] = str(emitter.P)
         config['SPHERE']['u1'] = str(u1)
         config['SPHERE']['u3'] = str(u3)
         config['SPHERE']['gamma'] = str(gamma2)
