@@ -7,8 +7,9 @@ from eval.utility import *
 
 pl.figure(figsize=(10, 10))
 
-dps = load_data_points('D:/2021_07_26/data/s01/')
-alphas, betas, gs = get_proper_matrix(dps)
+dps = load_data_points('/home/jan-menno/Data/28_07_2021/s0/')
+print(dps)
+#alphas, betas, gs = get_proper_matrix(dps)
 
 a = []
 b = []
@@ -20,14 +21,30 @@ for dp in dps:
     b.append(beta)
     g.append(get_redshift(dp))#
 
-    pl.scatter(alpha, beta)
+    #pl.scatter(alpha, beta)
 
 cmap = pl.cm.cool_r
-norm = mp.colors.Normalize(np.nanmin(gs), np.nanmax(gs))
-pl.imshow(gs, extent=(alphas[0], alphas[-1], betas[0], betas[-1]), cmap=cmap, norm=norm, interpolation='bilinear')
+gmin, gmax = np.amin(np.array(g)), np.amax(np.array(g))
+norm = mp.colors.Normalize(np.amin(gmin), np.amax(gmax))
 
-pl.xlim(alphas[0], alphas[-1])
-pl.ylim(betas[0], betas[-1])
+for alpha, beta, gg in zip(a, b, g):
+    pl.scatter(alpha, beta, color='black', s=2)
+print(g)
+
+a, b, g = interpolate(a, b, g)
+tol = 0.0
+#g[g < (gmin-tol)] = np.nan
+mapp = pl.imshow(g, extent=(-1.35, 1.35, -6.7, -4), cmap=cmap, norm=norm)
+pl.colorbar(mapp)
+pl.xlim(-1.35, 1.35)
+pl.xlabel(r'$\alpha$')
+pl.ylabel(r'$\beta$')
+pl.ylim(-6.7, -4)
+#pl.show()
+#pl.imshow(gs, extent=(alphas[0], alphas[-1], betas[0], betas[-1]), cmap=cmap, norm=norm, interpolation='bilinear')
+
+#pl.xlim(alphas[0], alphas[-1])
+#pl.ylim(betas[0], betas[-1])
 
 pl.show()
 #gmin, gmax = np.amin(np.array(g)), np.amax(np.array(g))

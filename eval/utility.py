@@ -5,6 +5,7 @@ from os.path import isfile, join
 from eval.data_reading import DataPoint
 from light.geodesics import geod
 from scipy.integrate import odeint
+import scipy.interpolate as si
 
 
 def load_data_points(directory='./'):
@@ -29,7 +30,7 @@ def get_coordinates(dp):
     ptheta = np.sqrt(dp.q - dp.l**2 / np.tan(dp.tobs)**2) / dp.robs
 
     alpha = dp.robs * pphi / pr
-    beta = dp.robs * ptheta / pr
+    beta = -dp.robs * ptheta / pr
 
     return alpha, beta
 
@@ -72,8 +73,8 @@ def get_proper_matrix(dp_list):
     aleft, bleft = -1.4, 4#get_coordinates_from_vars(qs[0], ls[0], robs, tobs)
     aright, bright = 1.4, 6.8#get_coordinates_from_vars(qs[-1], ls[-1], robs, tobs)
 
-    alphas = np.linspace(aleft, aright, num=100)
-    betas = np.linspace(bleft, bright, num=100)
+    alphas = np.linspace(aleft, aright, num=250)
+    betas = np.linspace(bleft, bright, num=250)
 
     for b in betas:
         row = []
@@ -87,7 +88,7 @@ def get_proper_matrix(dp_list):
             dp = sp * l / (robs ** 2 * np.sin(tobs) ** 2)
 
             psi = np.array([0, dt, robs, dr, tobs, dth, pobs, dp])
-            sigma = np.linspace(0, 40, num=1000)
+            sigma = np.linspace(0, 50, num=10000)
 
             data = odeint(geod, psi, sigma, atol=1e-7, rtol=1e-7)
 
@@ -104,7 +105,7 @@ def get_proper_matrix(dp_list):
             zc = 0
 
             dist = np.sqrt((x - xc)**2 + (y - yc)**2 + (z - zc)**2)
-            tol = 1e-2
+            tol = 1e-3
             flag = bool(dist[dist <= (dp_list[0].rho - tol)].size)
 
             if flag:
@@ -137,12 +138,17 @@ def get_proper_matrix(dp_list):
     #pl.show()
 
 
-def interpolate(a, b, g, xlim=(-1.35, 1.35), ylim=(4, 6.7)):
-    import scipy.interpolate as si
-    f = si.interp2d(a, b, g, kind='linear')
+def interpolate(a, b, g, xlim=(-1.35, 1.35), ylim=(-4, -6.7)):
+    f = si.interp2d(a, b, g, kind='cubic')
 
-    new_x = np.linspace(*xlim, num=1000)
-    new_y = np.linspace(*ylim, num=1000)
+    new_x = np.linspace(*xlim, num=2000)
+    new_y = np.linspace(*ylim, num=2000)
     new_g = f(new_x, new_y)
+
+    for l in range(len(new_x)):
+        for k in range(len(new_y)):
+            if np.sqrt(new_x[l]**2 + ((new_y[k] + 5.35)**2)) > 1.25:
+                new_g[l][k] = np.nan
+        new_g[l] = new_g[l][::-1]
 
     return new_x, new_y, new_g

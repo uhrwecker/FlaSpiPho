@@ -140,6 +140,10 @@ class ThreeDPlotmachine:
         self.ax.set_ylim(-self.robs-1, self.robs+1)
         self.ax.set_zlim(-2/3*self.robs, 2/3*self.robs)
 
+        self.ax.set_xlabel('x / M')
+        self.ax.set_ylabel('y / M')
+        self.ax.set_zlabel('z / M')
+
     def show(self):
         """
         (Simple) wrapper of the pyplot.show() feature for when you dont want to import pyplot in your main script.
