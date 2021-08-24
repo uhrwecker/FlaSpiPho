@@ -56,12 +56,13 @@ class PhotonProperties:
         """
         vr, vphi, gamma = self.emitter.get_velocities()
         u1, u3, gamma2 = self.emitter.get_rotation_velocities()
+        math_v, gamma3 = self.emitter.get_momentum_velocity()
         rho = self.emitter.rho
 
         alpha = 5/2 * self.emitter.get_s() / rho**2
 
-        E = self._E(self.chi, self.eta, self.iota, gamma, vphi, gamma2, u1, u3, self.alpha)
-        L = self._L(self.chi, self.eta, self.iota, gamma, vphi, gamma2, u1, u3, self.alpha)
+        E = self._E(self.chi, self.eta, self.iota, gamma, vphi, gamma2, u1, u3, math_v, gamma3)
+        L = self._L(self.chi, self.eta, self.iota, gamma, vphi, gamma2, u1, u3, math_v, gamma3)
         Q = self._Q(self.chi, self.eta, L)
 
         return E, L, Q
@@ -135,7 +136,7 @@ class PhotonProperties:
         if recalc:
             self.setup()
 
-    def _E(self, chi, eta, iota, gamma, vphi, gamma2, u1, u3, alpha):
+    def _E(self, chi, eta, iota, gamma, vphi, gamma2, u1, u3, math_v, gamma3):
         """
         Private method to calculate the constant of motion E, as described by the theory.
         :param chi: float; scaling parameter for the photon momentum, invariant for the application
@@ -149,17 +150,20 @@ class PhotonProperties:
         :param alpha: float; deprecated
         :return: E; constant of motion
         """
-        d0 = gamma2 * (1 + u1 * np.cos(iota) * np.sin(eta) + u3 * np.sin(iota) * np.sin(eta))
-        d1 = -gamma2 * u1 + (1 + gamma2**2 * u1**2 / (1 + gamma2)) * np.cos(iota) * np.sin(eta) + \
-             (gamma2 **2 * u1 * u3 / (1 + gamma2)) * np.sin(iota) * np.sin(eta)
-        d3 = -gamma2 * u1 + (gamma2 **2 * u1 * u3 / (1 + gamma2)) * np.cos(iota) * np.sin(eta) + \
+        c0 = gamma2 * (1 + u1 * np.cos(iota) * np.sin(eta) + u3 * np.sin(iota) * np.sin(eta))
+        #c1 = -gamma2 * u1 + (1 + gamma2**2 * u1**2 / (1 + gamma2)) * np.cos(iota) * np.sin(eta) + \
+        #     (gamma2 **2 * u1 * u3 / (1 + gamma2)) * np.sin(iota) * np.sin(eta)
+        c3 = -gamma2 * u1 + (gamma2 **2 * u1 * u3 / (1 + gamma2)) * np.cos(iota) * np.sin(eta) + \
              (1 + gamma2**2 * u3**2 / (1 + gamma2)) * np.sin(iota) * np.sin(eta)
-        c3 = -np.sin(alpha) * d1 + np.cos(alpha) * d3
-        a0 = gamma * (d0 + vphi * c3)
+
+        b0 = gamma3 * (c0 + math_v * c3)
+        b3 = gamma3 * math_v * c0 + (1 + gamma3**2 * math_v**2 / (1 + gamma3)) * c3
+
+        a0 = gamma * (b0 + vphi * b3)
 
         return chi * a0
 
-    def _L(self, chi, eta, iota, gamma, vphi, gamma2, u1, u3, alpha):
+    def _L(self, chi, eta, iota, gamma, vphi, gamma2, u1, u3, math_v, gamma3):
         """
         Private method to calculate the constant of motion L, as described by the theory.
         :param chi: float; scaling parameter for the photon momentum, invariant for the application
@@ -173,13 +177,16 @@ class PhotonProperties:
         :param alpha: float; deprecated
         :return: L; constant of motion
         """
-        d0 = gamma2 * (1 + u1 * np.cos(iota) * np.sin(eta) + u3 * np.sin(iota) * np.sin(eta))
-        d1 = -gamma2 * u1 + (1 + gamma2 ** 2 * u1 ** 2 / (1 + gamma2)) * np.cos(iota) * np.sin(eta) + \
-             (gamma2 ** 2 * u1 * u3 / (1 + gamma2)) * np.sin(iota) * np.sin(eta)
-        d3 = -gamma2 * u1 + (gamma2 ** 2 * u1 * u3 / (1 + gamma2)) * np.cos(iota) * np.sin(eta) + \
+        c0 = gamma2 * (1 + u1 * np.cos(iota) * np.sin(eta) + u3 * np.sin(iota) * np.sin(eta))
+        # c1 = -gamma2 * u1 + (1 + gamma2**2 * u1**2 / (1 + gamma2)) * np.cos(iota) * np.sin(eta) + \
+        #     (gamma2 **2 * u1 * u3 / (1 + gamma2)) * np.sin(iota) * np.sin(eta)
+        c3 = -gamma2 * u1 + (gamma2 ** 2 * u1 * u3 / (1 + gamma2)) * np.cos(iota) * np.sin(eta) + \
              (1 + gamma2 ** 2 * u3 ** 2 / (1 + gamma2)) * np.sin(iota) * np.sin(eta)
-        c3 = - np.sin(alpha) * d1 + np.cos(alpha) * d3
-        a3 = gamma * vphi * d0 + (1 + gamma**2 * vphi**2 / (1 + gamma)) * c3
+
+        b0 = gamma3 * (c0 + math_v * c3)
+        b3 = gamma3 * math_v * c0 + (1 + gamma3 ** 2 * math_v ** 2 / (1 + gamma3)) * c3
+
+        a3 = gamma * vphi * b0 + (1 + gamma*2 * vphi**2 / (1 + gamma)) * b3
 
         return chi * a3 * self.r * np.sin(self.theta)
 

@@ -54,6 +54,10 @@ class EmitterProperties:
         self.u3 = None
         self.gamma2 = None
 
+        # velocity between tangent and momentum:
+        self.math_v = None
+        self.gamma3 = None
+
         self.setup()
 
     def setup(self):
@@ -63,6 +67,7 @@ class EmitterProperties:
         self.r, self.theta, self.phi = convert_position(self.r0, np.pi / 2, self.phi0, self.rho, self.T, self.P)
         self.vr, self.vphi, self.gamma = self.calculate_vel()
         self.u1, self.u3, self.gamma2 = self.calculate_rotation()
+        self.math_v, self.gamma3 = self.calculate_mom()
 
     def calculate_vel(self):
         """
@@ -85,6 +90,11 @@ class EmitterProperties:
         u3 = self._u3()
 
         return u1, u3, 1/np.sqrt(1 - u1**2 - u3**2)
+
+    def calculate_mom(self):
+        math_v = self._math_v()
+
+        return math_v, 1/np.sqrt(1 - math_v**2)
 
     def set_s(self, s, recalc=True):
         """
@@ -147,6 +157,9 @@ class EmitterProperties:
         """
         return self.u1, self.u3, self.gamma2
 
+    def get_momentum_velocity(self):
+        return self.math_v, self.gamma3
+
     def get_sense_of_rotation(self):
         """
             Getter for the sense of rotation.
@@ -208,3 +221,11 @@ class EmitterProperties:
             print(f'warning: root smaller 0; might be ok, root is {root}')  #
 
         return 0#self.r0 / (self.r0 ** 3 * self.E - self.s * self.L) * np.sqrt(np.abs(root))
+
+    def _math_v(self):
+        xv = - 3 * self.s + np.sqrt(4*self.r**3 + 13 * self.s**2 - 8 * self.s**4 / self.r**3)
+        xv /= 2 * np.sqrt(self.r**2 - 2*self.r) * (self.r - self.s**2 / self.r**2)
+
+        xu = (self.r - self.s**2 / self.r**2) / (self.r + 2 * self.s**2 / self.r**2) * xv
+
+        return 1 - (1 - xv**2) * (1 - xu**2) / (1 - xv * xu)**2

@@ -62,6 +62,7 @@ class DataHandling:
 
         vr, vphi, gamma = emitter.get_velocities()
         u1, u3, gamma2 = emitter.get_rotation_velocities()
+        math_v, gamma3 = emitter.get_momentum_velocity()
         r, theta, phi = emitter.get_position()
 
         config = self.input_config
@@ -92,6 +93,8 @@ class DataHandling:
         config['SPHERE']['u1'] = str(u1)
         config['SPHERE']['u3'] = str(u3)
         config['SPHERE']['gamma'] = str(gamma2)
+        config['SPHERE']['mom_v'] = str(math_v)
+        config['SPHERE']['gamma3'] = str(gamma3)
 
         with open(self.dir + '{}_{}_{}.ini'.format(str(r)[:7], str(theta)[:7], str(phi)[:7]), 'w') as file:
             config.write(file)
