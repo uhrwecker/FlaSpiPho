@@ -228,4 +228,4 @@ class EmitterProperties:
 
         xu = (self.r - self.s**2 / self.r**2) / (self.r + 2 * self.s**2 / self.r**2) * xv
 
-        return 1 - (1 - xv**2) * (1 - xu**2) / (1 - xv * xu)**2
+        return np.sqrt(1 - (1 - xv**2) * (1 - xu**2) / (1 - xv * xu)**2)

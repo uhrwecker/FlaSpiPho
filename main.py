@@ -107,8 +107,8 @@ if __name__ == '__main__':
         fp = './demo_input.ini'
         save = True
         save_when_colliding = False
-        grid = 30, 30
-        plot = False
+        grid = None, None
+        plot = True
 
         ###################################################################
 
