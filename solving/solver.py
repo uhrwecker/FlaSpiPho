@@ -53,6 +53,9 @@ class ODESolver:
 
         return self.sigma, result
 
+    def check_duplicate_saving(self):
+        return self.dm.check_for_duplicates(self.r0, self.theta0, self.phi0)
+
     def set_iota(self, iota, recalc=True):
         """
             Set (and possibly recalculate) the emission angle iota.
