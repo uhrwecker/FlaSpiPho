@@ -60,7 +60,7 @@ class EmitterObserverProblem:
         # initial parameters:
         converged = False
         step = 0
-        incr = 0.01
+        incr = 0.5
 
         result_iota = None
         result_eta = None
@@ -135,6 +135,9 @@ class EmitterObserverProblem:
                 r = data[:, 2]
                 t = data[:, 4]
                 p = data[:, 6]
+
+                if r[r < 2.].shape[0]:
+                    continue
 
                 # interpolate around the observer position:
                 r, t, p = self._interpolate_around_data(r, t, p, sigma)
