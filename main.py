@@ -82,7 +82,7 @@ def main(arguments=None):
                     solver.save(save_when_colliding)
 
     else:
-        iota, eta, flag = eop.find_critical_angles(0., 2 * np.pi, 0., np.pi)
+        iota, eta, flag = eop.find_critical_angles(0., 2 * np.pi, 0., np.pi, n=10)
         solver.set_eta(eta, False)
         solver.set_iota(iota, True)
 
@@ -92,6 +92,7 @@ def main(arguments=None):
         if plot:
             td.plot_observer()
             td.plot_emitter()
+            td.plot_bh()
             td.plot_test_ray(solver, iota, eta)
             td.adjust()
             td.show()
@@ -106,7 +107,7 @@ if __name__ == '__main__':
 
         fp = './demo_input.ini'
         save = True
-        save_when_colliding = False
+        save_when_colliding = True
         grid = None, None
         plot = True
 

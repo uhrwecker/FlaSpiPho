@@ -12,7 +12,7 @@ def geod(w, t):
     """
 
     # mass:
-    m = 0
+    m = 1
 
     t, td, r, rd, th, thd, phi, phid = w
 

@@ -61,6 +61,17 @@ class ThreeDPlotmachine:
         # plot the emitter orbit
         self.ax.plot(self.rc * np.cos(phis), self.rc * np.sin(phis), 0 * phis)
 
+    def plot_bh(self):
+        u, v = np.mgrid[0:2 * np.pi:20j, 0:np.pi:10j]
+
+        # calculate the real cartesian coordinates (r_local + r_0)
+        x = 2 * np.cos(u) * np.sin(v)
+        y = 2 * np.sin(u) * np.sin(v)
+        z = 2 * np.cos(v)
+
+        # plot the emitter sphere
+        self.ax.plot_wireframe(x, y, z, color='black')
+
     def plot_test_ray(self, solver, iota, eta):
         """
         Plotting the light ray as describes the solver object and the emission angles.

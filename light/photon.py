@@ -73,14 +73,14 @@ class PhotonProperties:
             :return: iterable; [t', r', theta', phi']
         """
         # dt:
-        dt = self.E
+        dt = self.E / (1 - 2 / self.r)
 
         # dr:
-        dr = np.sqrt(self.E ** 2 - (self.Q + self.L ** 2) / self.r ** 2)
+        dr = np.sqrt(self.E ** 2 - (self.Q + self.L ** 2) / self.r ** 2 * (1 - 2 / self.r))
         #print(dr)
         if np.isnan(dr):
             dr = 0
-        #dr = self._check_dr_sign(self.alpha)
+        dr *= self._check_dr_sign()
 
         # dtheta:
         omega = self.Q - self.L ** 2 * (np.cos(self.theta) / np.sin(self.theta)) ** 2
@@ -161,7 +161,7 @@ class PhotonProperties:
 
         a0 = gamma * (b0 + vphi * b3)
 
-        return chi * a0
+        return chi * a0 * np.sqrt(1 - 2 / self.r)
 
     def _L(self, chi, eta, iota, gamma, vphi, gamma2, u1, u3, math_v, gamma3):
         """
@@ -186,7 +186,7 @@ class PhotonProperties:
         b0 = gamma3 * (c0 + math_v * c3)
         b3 = gamma3 * math_v * c0 + (1 + gamma3 ** 2 * math_v ** 2 / (1 + gamma3)) * c3
 
-        a3 = gamma * vphi * b0 + (1 + gamma*2 * vphi**2 / (1 + gamma)) * b3
+        a3 = gamma * vphi * b0 + (1 + gamma**2 * vphi**2 / (1 + gamma)) * b3
 
         return chi * a3 * self.r * np.sin(self.theta)
 
@@ -210,10 +210,7 @@ class PhotonProperties:
         u1, u3, gamma2 = self.emitter.get_rotation_velocities()
         iota, eta = self.iota, self.eta
 
-        d1 = -gamma2 * u1 + (1 + gamma2 ** 2 * u1 ** 2 / (1 + gamma2)) * np.cos(iota) * np.sin(eta) + \
-             (gamma2 ** 2 * u1 * u3 / (1 + gamma2)) * np.sin(iota) * np.sin(eta)
-        d3 = -gamma2 * u1 + (gamma2 ** 2 * u1 * u3 / (1 + gamma2)) * np.cos(iota) * np.sin(eta) + \
-             (1 + gamma2 ** 2 * u3 ** 2 / (1 + gamma2)) * np.sin(iota) * np.sin(eta)
-        c1 = np.cos(alpha) * d1 + np.sin(alpha) * d3
+        c1 = -gamma2 * u1 + (1 + gamma2 ** 2 * u1 ** 2 / (1 + gamma2)) * np.cos(iota) * np.sin(eta) + \
+             (gamma2 **2 * u1 * u3 / (1 + gamma2)) * np.sin(iota) * np.sin(eta)
 
-        return self.chi * c1
+        return np.sign(self.chi * c1 / np.sqrt(1 - 2/self.r))

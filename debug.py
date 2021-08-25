@@ -30,8 +30,8 @@ def nostdout():
 
 file = './demo_input.ini'
 iotas = np.linspace(0, 2*np.pi, num=25)
-eta = 0.78
-iota = 1.7
+eta = 0.7165623776987919
+iota = 1.5
 rings = 5
 n = 3
 
@@ -53,7 +53,7 @@ for item in tqdm(grid, file=sys.stdout):
     with nostdout():
         solver.set_T_and_P(item[0], item[1])
         eop = EmitterObserverProblem(solver)
-        #iota, eta, flag = eop.find_critical_angles(0, 2*np.pi, 0, np.pi, n=10)
+        iota, eta, flag = eop.find_critical_angles(0, 2*np.pi, 0, np.pi, n=10)
 
         solver.set_eta(eta, False)
         solver.set_iota(iota)
