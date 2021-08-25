@@ -1,6 +1,7 @@
 import numpy as np
 import configparser as cp
 import pandas as pd
+import os.path
 
 
 class DataHandling:
@@ -19,6 +20,11 @@ class DataHandling:
 
         # config['DATA']['fp'] has to end with /
         self.dir, self.input_config = self.load_input()
+
+    def check_for_duplicates(self, r0, t0, p0):
+        tag = self.dir + '{}_{}_{}.ini'.format(str(r0)[:7], str(t0)[:7], str(p0)[:7])
+
+        return os.path.isfile(tag)
 
     def generate_result_file(self, sigma, data):
         """

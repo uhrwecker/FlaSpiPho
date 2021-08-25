@@ -72,30 +72,39 @@ def main(arguments=None):
         for item in tqdm(grid, file=sys.stdout):
             with nostdout():
                 solver.set_T_and_P(item[0], item[1])
-                eop = EmitterObserverProblem(solver)
-                iota, eta, flag = eop.find_critical_angles(0., 2 * np.pi, 0., np.pi)
 
-                solver.set_eta(eta, False)
-                solver.set_iota(iota)
+                if not solver.check_duplicate_saving():
+                    eop = EmitterObserverProblem(solver)
+                    iota, eta, flag = eop.find_critical_angles(0., 2 * np.pi, 0., np.pi)
 
-                if save:
-                    solver.save(save_when_colliding)
+                    solver.set_eta(eta, False)
+                    solver.set_iota(iota)
+
+                    if save:
+                        solver.save(save_when_colliding)
+
+                else:
+                    print('File already exists. Please delete before new calculation, or change the saving directory.')
 
     else:
-        iota, eta, flag = eop.find_critical_angles(0., 2 * np.pi, 0., np.pi, n=10)
-        solver.set_eta(eta, False)
-        solver.set_iota(iota, True)
+        if not solver.check_duplicate_saving():
+            iota, eta, flag = eop.find_critical_angles(0., 2 * np.pi, 0., np.pi, n=10)
+            solver.set_eta(eta, False)
+            solver.set_iota(iota, True)
 
-        if save:
-            solver.save(save_when_colliding)
+            if save:
+                solver.save(save_when_colliding)
 
-        if plot:
-            td.plot_observer()
-            td.plot_emitter()
-            td.plot_bh()
-            td.plot_test_ray(solver, iota, eta)
-            td.adjust()
-            td.show()
+            if plot:
+                td.plot_observer()
+                td.plot_emitter()
+                td.plot_bh()
+                td.plot_test_ray(solver, iota, eta)
+                td.adjust()
+                td.show()
+
+        else:
+            print('File already exists. Please delete before new calculation, or change the saving directory.')
 
 
 
