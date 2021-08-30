@@ -68,24 +68,29 @@ def main(arguments=None):
     eop = EmitterObserverProblem(solver)
 
     if rings and n:
+        liste = []
         grid = get_spherical_grid(rings, n)
         for item in tqdm(grid, file=sys.stdout):
             with nostdout():
                 solver.set_T_and_P(item[0], item[1])
 
-                if not solver.check_duplicate_saving():
-                    eop = EmitterObserverProblem(solver)
-                    iota, eta, flag = eop.find_critical_angles(0., 2 * np.pi, 0., np.pi)
+                try:
+                    if not solver.check_duplicate_saving():
+                        eop = EmitterObserverProblem(solver)
+                        iota, eta, flag = eop.find_critical_angles(0., 2 * np.pi, 0., np.pi)
 
-                    solver.set_eta(eta, False)
-                    solver.set_iota(iota)
+                        solver.set_eta(eta, False)
+                        solver.set_iota(iota)
 
-                    if save:
-                        solver.save(save_when_colliding)
+                        if save:
+                            solver.save(save_when_colliding)
 
-                else:
-                    print('File already exists. Please delete before new calculation, or change the saving directory.')
-
+                    else:
+                        print('File already exists. Please delete before new calculation, or change the saving directory.')
+                except:
+                    print('Cant save / calculate this part. See to this later.')
+                    liste.append(item)
+        print(liste)
     else:
         if not solver.check_duplicate_saving():
             iota, eta, flag = eop.find_critical_angles(0., 2 * np.pi, 0., np.pi, n=10)
@@ -105,7 +110,6 @@ def main(arguments=None):
 
         else:
             print('File already exists. Please delete before new calculation, or change the saving directory.')
-
 
 
 if __name__ == '__main__':
