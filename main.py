@@ -90,7 +90,7 @@ def main(arguments=None):
                 except:
                     print('Cant save / calculate this part. See to this later.')
                     liste.append(item)
-        print(liste)
+        solver.dm.write_error_entry(liste)
     else:
         if not solver.check_duplicate_saving():
             iota, eta, flag = eop.find_critical_angles(0., 2 * np.pi, 0., np.pi, n=10)

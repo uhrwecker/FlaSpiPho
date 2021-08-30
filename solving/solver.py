@@ -109,7 +109,9 @@ class ODESolver:
         elif collision and save_colliding_light_ray:
             self.dm.generate_data_config(self.emitter, self.photon)
             self.dm.generate_result_file(*self.solve())
+            self.dm.write_collision_entry(*self.solve())
         else:
+            self.dm.write_collision_entry(*self.solve())
             print('Did not save the colliding light ray.\n')
 
         return collision

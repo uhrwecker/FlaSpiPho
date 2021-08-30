@@ -1,7 +1,8 @@
 import numpy as np
 import configparser as cp
 import pandas as pd
-import os.path
+import os
+import json
 
 
 class DataHandling:
@@ -21,10 +22,18 @@ class DataHandling:
         # config['DATA']['fp'] has to end with /
         self.dir, self.input_config = self.load_input()
 
-    def check_for_duplicates(self, r0, t0, p0):
-        tag = self.dir + '{}_{}_{}.ini'.format(str(r0)[:7], str(t0)[:7], str(p0)[:7])
+        # check if the log directory already exists in the saving directory:
+        if not os.path.exists(self.dir + 'log/'):
+            os.makedirs('log/')
+            with open(self.dir + 'log/info.txt', 'w') as file:
+                json.dump({'collisions': [], 'errors': []}, file)
 
-        return os.path.isfile(tag)
+        self.collisions, self.errors = self._read_from_json(self.dir + 'log/info.txt')
+
+    def check_for_duplicates(self, r0, t0, p0):
+        tag = '{}_{}_{}'.format(str(r0)[:7], str(t0)[:7], str(p0)[:7])
+
+        return os.path.isfile(self.dir + tag + '.ini') or tag in self.collisions
 
     def generate_result_file(self, sigma, data):
         """
@@ -153,6 +162,24 @@ class DataHandling:
 
         return float(cf['ro']), float(cf['thetao']), float(cf['phio'])
 
+    def write_collision_entry(self, sigma, data):
+        r = data[:, 2][0]
+        theta = data[:, 4][0]
+        phi = data[:, 6][0]
+
+        tag = '{}_{}_{}'.format(str(r)[:7], str(theta)[:7], str(phi)[:7])
+
+        self.collisions.append(tag)
+
+        with open(self.dir + 'log/info.txt', 'w') as file:
+            json.dump({'collisions': self.collisions, 'errors': self.errors}, file, indent=4)
+
+    def write_error_entry(self, errors):
+        self.errors += errors
+
+        with open(self.dir + 'log/info.txt', 'w') as file:
+            json.dump({'collisions': self.collisions, 'errors': self.errors}, file, indent=4)
+
     def load_input(self):
         """
         Reads the input file specified in the initialization.
@@ -199,3 +226,9 @@ class DataHandling:
 
         with open(self.dir+'demo_input.ini', 'w') as file:
             config.write(file)
+
+    def _read_from_json(self, fp):
+        with open(fp, 'r') as file:
+            data = json.load(file)
+
+        return data['collisions'], data['errors']
