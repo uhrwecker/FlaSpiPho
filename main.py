@@ -77,7 +77,7 @@ def main(arguments=None):
                 try:
                     if not solver.check_duplicate_saving():
                         eop = EmitterObserverProblem(solver)
-                        iota, eta, flag = eop.find_critical_angles(0., 2 * np.pi, 0., np.pi)
+                        iota, eta, flag = eop.find_critical_angles(0., 2 * np.pi, 0., np.pi, n=10)
 
                         solver.set_eta(eta, False)
                         solver.set_iota(iota)

@@ -24,7 +24,7 @@ class DataHandling:
 
         # check if the log directory already exists in the saving directory:
         if not os.path.exists(self.dir + 'log/'):
-            os.makedirs('log/')
+            os.makedirs(self.dir + 'log/')
             with open(self.dir + 'log/info.txt', 'w') as file:
                 json.dump({'collisions': [], 'errors': []}, file)
 

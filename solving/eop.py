@@ -14,7 +14,7 @@ class EmitterObserverProblem:
         self.solver = solver
         self.robs, self.thetaobs, self.phiobs = self.solver.dm.get_input_observer_config()
 
-    def find_critical_angles(self, imin=0., imax=2*np.pi, emin=0., emax=np.pi, n=15, max_step=40):
+    def find_critical_angles(self, imin=0., imax=2*np.pi, emin=0., emax=np.pi, n=15, max_step=50):
         """
         Main routine to find the critical emission angles that result in a light ray that connects emitter and observer.
         See bad_montecarlo for a specificaton of n and max_step.
@@ -60,7 +60,8 @@ class EmitterObserverProblem:
         # initial parameters:
         converged = False
         step = 0
-        incr = 0.5
+        incr = 0.1
+        inc2 = 0.05
 
         result_iota = None
         result_eta = None
@@ -76,7 +77,6 @@ class EmitterObserverProblem:
             # generate the boundaries of iota and eta, and a flag whether it converged, and the least distance
             imin, imax, emin, emax, flag, dist = self._generate_solutions(parameters, np.abs(imax - imin) / n,
                                                                     np.abs(emax - emin) / n, step)
-
             if flag:
                 print(f'Converged at step {step} / {max_step}!')
                 print(f'- Iota = {imin}, Eta = {emin}.')
@@ -92,14 +92,18 @@ class EmitterObserverProblem:
                 print(f'-- eta  between {emin} and {emax}')
 
             # if the algorithm did not converge fast enough:
-            if np.abs(1 - last_smallest_distance / dist) < 1e-3:
+            if np.abs(1 - last_smallest_distance / dist) < 1e-2:
                 print(f'-- the algorithm did not converge close enough; trying again once ...')
-                imin -= incr
-                imax += incr
-                emin -= incr
-                emax += incr
+                if np.abs(1 - imin/imax) < 1e-3:
+                    imin -= incr
+                    imax += incr
+                if np.abs(1 - emin/emax) < 1e-3:
+                    emin -= inc2
+                    emax += inc2
 
-                n += 5
+                n -= 1
+                if n < 3:
+                    n = 15
 
             step += 1
             if step == max_step:
@@ -175,7 +179,9 @@ class EmitterObserverProblem:
             print(f'Somehow, the number of values are too small for {r[idx]}.')
             print(self.solver.r0, self.solver.theta0, self.solver.phi0)
             print(self.solver.emitter.T, self.solver.emitter.P)
-            raise KeyError
+            #raise KeyError
+            idx = np.array([0, 1])
+            new_x = np.linspace(3, 4, num=100)
 
         r = np.interp(new_x, s, r[idx])
         t = np.interp(new_x, s, t[idx])

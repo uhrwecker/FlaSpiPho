@@ -53,8 +53,9 @@ for item in tqdm(grid, file=sys.stdout):
     with nostdout():
         solver.set_T_and_P(item[0], item[1])
         eop = EmitterObserverProblem(solver)
-        iota, eta, flag = eop.find_critical_angles(0, 2*np.pi, 0, np.pi, n=10)
-
+        iota, eta, flag = eop.find_critical_angles(0, 2*np.pi, 0, np.pi, n=5)
+        #iota = 3.6163183517516373
+        #eta = 0.57
         solver.set_eta(eta, False)
         solver.set_iota(iota)
 
