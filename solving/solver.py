@@ -17,12 +17,12 @@ class ODESolver:
         # setup the initial parameters from the input file:
         self.dm = dm.DataHandling(file)
         s, r, _, phi0 = self.dm.get_input_center_config()
-        rho, T, P, omega = self.dm.get_input_sphere_config()
+        rho, T, P = self.dm.get_input_sphere_config()
         chi, iota, eta, rotation = self.dm.get_input_photon_config()
         start, stop, num, abserr, relerr = self.dm.get_input_numeric_config()
 
         # setup the emitter and photon object:
-        self.emitter = emitter.EmitterProperties(s, r0=r, phi0=phi0, omega=omega, P=P, T=T, rho=rho, rotation=rotation)
+        self.emitter = emitter.EmitterProperties(s, r0=r, phi0=phi0, P=P, T=T, rho=rho, rotation=rotation)
         self.photon = light.PhotonProperties(self.emitter, chi, iota, eta)
 
         self.start = start

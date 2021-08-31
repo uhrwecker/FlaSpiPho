@@ -6,7 +6,7 @@ class EmitterProperties:
     """
         Class containing all emitter properties.
     """
-    def __init__(self, s, r0=8, phi0=0, omega=1, P=0, T=np.pi/2, rho=0.2, rotation='positive'):
+    def __init__(self, s, r0=8, phi0=0, P=0, T=np.pi/2, rho=0.2, rotation='positive'):
         """
         :param s: float; spin of the object, perpendicular to the angular momentum of the orbit
         :param r0: float; radial position of the center of the sphere
@@ -40,9 +40,6 @@ class EmitterProperties:
         self.r = None
         self.theta = None
         self.phi = None
-
-        # measure for the orbital velocity:
-        self.omega = omega
 
         # orbit velocities:
         self.vr = None
@@ -204,7 +201,10 @@ class EmitterProperties:
             Calculate the orbital velocity. This subroutine includes all equations necessary.
             :return: float; orbital velocity of the timelike object.
         """
-        return self.r0**2 * self.omega / np.sqrt(1 + self.r0**2 * self.omega**2)
+        xv = - 3 * self.s + np.sqrt(4 * self.r ** 3 + 13 * self.s ** 2 - 8 * self.s ** 4 / self.r ** 3)
+        xv /= 2 * np.sqrt(self.r ** 2 - 2 * self.r) * (self.r - self.s ** 2 / self.r ** 2)
+
+        return xv
 
     def _vr(self):
         """
@@ -213,13 +213,6 @@ class EmitterProperties:
             Note that this is 0 (most of the times), as only circular motion is considered.
             :return: float; radial velocity of the timelike object.
         """
-        root = (self.r0 ** 2 * self.E - self.s / self.r0 * self.L) ** 2 - \
-               self.r0 * (self.r0 - 2) * ((self.r0 ** 3 - self.s ** 2) ** 2 / self.r0 ** 4 +
-                                          (self.L - self.s * self.E) ** 2)
-
-        if root < 0:
-            print(f'warning: root smaller 0; might be ok, root is {root}')  #
-
         return 0#self.r0 / (self.r0 ** 3 * self.E - self.s * self.L) * np.sqrt(np.abs(root))
 
     def _math_v(self):

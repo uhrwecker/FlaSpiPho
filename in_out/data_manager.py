@@ -128,11 +128,11 @@ class DataHandling:
     def get_input_sphere_config(self):
         """
         Simple getter config that returns the sphere properties config.
-        :return: [rho, T, P, omega]; radius of the sphere, T and P coordinates of the surface, and omega
+        :return: [rho, T, P]; radius of the sphere, T and P coordinates of the surface
         """
         cf = self.input_config['SPHERE']
 
-        return float(cf['rho']), float(cf['theta']), float(cf['phi']), float(cf['omega'])
+        return float(cf['rho']), float(cf['theta']), float(cf['phi'])
 
     def get_input_photon_config(self):
         """
@@ -209,7 +209,6 @@ class DataHandling:
         config['SPHERE']['rho'] = '1.'
         config['SPHERE']['theta'] = str(np.pi / 2)
         config['SPHERE']['phi'] = '0.'
-        config['SPHERE']['omega'] = '0.0075'
 
         config['PHOTON'] = {}
         config['PHOTON']['chi'] = '1.'
