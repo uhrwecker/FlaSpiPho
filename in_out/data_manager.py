@@ -28,7 +28,8 @@ class DataHandling:
             with open(self.dir + 'log/info.txt', 'w') as file:
                 json.dump({'collisions': [], 'errors': []}, file)
 
-        self.collisions, self.errors = self._read_from_json(self.dir + 'log/info.txt')
+        self.collisions, _ = self._read_from_json(self.dir + 'log/info.txt')
+        self.errors = []
 
     def check_for_duplicates(self, r0, t0, p0):
         tag = '{}_{}_{}'.format(str(r0)[:7], str(t0)[:7], str(p0)[:7])

@@ -14,7 +14,7 @@ class EmitterObserverProblem:
         self.solver = solver
         self.robs, self.thetaobs, self.phiobs = self.solver.dm.get_input_observer_config()
 
-    def find_critical_angles(self, imin=0., imax=2*np.pi, emin=0., emax=np.pi, n=15, max_step=50):
+    def find_critical_angles(self, imin=0., imax=2*np.pi, emin=0., emax=np.pi, n=15, max_step=100):
         """
         Main routine to find the critical emission angles that result in a light ray that connects emitter and observer.
         See bad_montecarlo for a specificaton of n and max_step.
@@ -62,6 +62,7 @@ class EmitterObserverProblem:
         step = 0
         incr = 0.1
         inc2 = 0.05
+        addition = 0
 
         result_iota = None
         result_eta = None
@@ -76,7 +77,7 @@ class EmitterObserverProblem:
 
             # generate the boundaries of iota and eta, and a flag whether it converged, and the least distance
             imin, imax, emin, emax, flag, dist = self._generate_solutions(parameters, np.abs(imax - imin) / n,
-                                                                    np.abs(emax - emin) / n, step)
+                                                                    np.abs(emax - emin) / n, step, addition)
             if flag:
                 print(f'Converged at step {step} / {max_step}!')
                 print(f'- Iota = {imin}, Eta = {emin}.')
@@ -101,6 +102,8 @@ class EmitterObserverProblem:
                     emin -= inc2
                     emax += inc2
 
+                addition += 1000
+
                 n -= 1
                 if n < 3:
                     n = 15
@@ -113,7 +116,7 @@ class EmitterObserverProblem:
 
         return result_iota, result_eta, converged
 
-    def _generate_solutions(self, params, di, de, step):
+    def _generate_solutions(self, params, di, de, step, addition):
         """
         This is where the (dark) magic happens.
         Here, calculate for every pair of (iota;eta) in params matrix the light ray and the minimal distance to the
@@ -126,7 +129,7 @@ class EmitterObserverProblem:
         """
         smallest = 1e10
         iesmall = (0, 0)
-        tol = 1e-5
+        tol = 2e-5
 
         for fixed_eta in params:
             for i, e in fixed_eta:
@@ -144,7 +147,7 @@ class EmitterObserverProblem:
                     continue
 
                 # interpolate around the observer position:
-                r, t, p = self._interpolate_around_data(r, t, p, sigma)
+                r, t, p = self._interpolate_around_data(r, t, p, sigma, addition)
 
                 # compute the minimal distance:
                 dist = self._get_minimal_distance_to_observer(r, t, p)
@@ -161,7 +164,7 @@ class EmitterObserverProblem:
 
         return iesmall[0] - di, iesmall[0] + di, iesmall[1] - de, iesmall[1] + de, False, smallest
 
-    def _interpolate_around_data(self, r, t, p, sigma):
+    def _interpolate_around_data(self, r, t, p, sigma, addition):
         """
         Routine to interpolate the ODESolver data around the observer position.
         :param r: np.array; array of radial positions along the light ray
@@ -173,8 +176,10 @@ class EmitterObserverProblem:
         idx = np.where(r[r < self.robs + 0.1] > self.robs - 0.1)[0]
 
         s = sigma[idx]
+
         try:
-            new_x = np.linspace(s[0], s[-1], num=10000)
+            num = int(10000 + addition)
+            new_x = np.linspace(s[0], s[-1], num=num)
         except:
             print(f'Somehow, the number of values are too small for {r[idx]}.')
             print(self.solver.r0, self.solver.theta0, self.solver.phi0)

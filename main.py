@@ -61,7 +61,7 @@ def main(arguments=None):
 
     robs, tobs, pobs = solver.dm.get_input_observer_config()
     _, rc, _, pc = solver.dm.get_input_center_config()
-    rho, _, _, _ = solver.dm.get_input_sphere_config()
+    rho, _, _ = solver.dm.get_input_sphere_config()
 
     td = ThreeDPlotmachine(robs, tobs, pobs, rc, pc, rho)
 
